@@ -38,12 +38,31 @@
   .checkrow.on{ background:rgba(28,42,74,.09); }
   .box{ width:23px; height:23px; flex:none; border:1.8px solid var(--line); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; }
   .checkrow.on .box{ background:var(--navy); border-color:var(--navy); }
-  .listitem{ background:var(--card); border:1px solid var(--line); border-radius:16px; }
-  .listitem > button.main{ width:100%; background:none; border:none; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; text-align:left; cursor:pointer; font-family:inherit; color:var(--ink); }
-  .listitem .t{ font-size:15px; font-weight:600; } .listitem .d{ font-size:12px; color:var(--muted); margin-top:1px; }
-  .lead{ display:flex; align-items:center; gap:11px; }
+  .grouphead{ display:flex; align-items:baseline; gap:9px; margin:2px 2px 10px; padding-bottom:7px; border-bottom:2px solid var(--ink); }
+  .grouphead .gname{ font-size:20px; font-weight:700; letter-spacing:.04em; }
+  .grouphead .gsub{ font-size:12px; color:var(--muted); }
+  .g-blood .gname{ color:var(--red); } .g-blood{ border-color:var(--red)!important; }
+  .g-light .gname{ color:var(--navy); } .g-light{ border-color:var(--navy)!important; }
+  .listitem{ background:var(--card); border:1px solid var(--line); border-radius:14px; }
+  .listitem > button.main{ width:100%; background:none; border:none; display:flex; align-items:center; justify-content:space-between; padding:13px 15px; text-align:left; cursor:pointer; font-family:inherit; color:var(--ink); gap:10px; }
+  .entryline{ font-size:13.5px; font-weight:600; line-height:1.35; }
+  .entryline .nm{ font-size:15px; }
+  .entrysub{ font-size:11.5px; color:var(--muted); margin-top:2px; }
   .back{ background:none; border:none; color:var(--muted); font-size:14px; display:flex; align-items:center; gap:4px; cursor:pointer; font-family:inherit; padding:0; }
-  h2.day{ font-size:24px; font-weight:600; }
+  .pill{ display:inline-block; font-size:11px; font-weight:700; letter-spacing:.05em; padding:3px 9px; border-radius:999px; }
+  .pill.blood{ background:rgba(179,36,23,.12); color:var(--red); }
+  .pill.light{ background:rgba(28,42,74,.12); color:var(--navy); }
+  h2.day{ font-size:23px; font-weight:600; line-height:1.1; }
+  .meta{ font-size:13px; color:var(--muted); margin-top:3px; }
+  .info{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; }
+  .info .l{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:2px; }
+  .info .v{ font-size:14.5px; line-height:1.4; }
+  .info .v a{ color:var(--navy); font-weight:600; text-decoration:none; }
+  .info + .info{ margin-top:8px; }
+  .btnrow{ display:flex; gap:8px; }
+  .actionbtn{ flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:13px; border-radius:12px; border:none; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; }
+  .actionbtn.maps{ background:var(--navy); color:#fff; }
+  .actionbtn.call{ background:var(--card); color:var(--ink); border:1px solid var(--line); }
   .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .thumb{ position:relative; border-radius:12px; overflow:hidden; background:var(--line); border:1px solid var(--line); }
   .thumb img{ width:100%; height:auto; display:block; cursor:zoom-in; }
@@ -51,7 +70,7 @@
   .viewer{ position:fixed; inset:0; z-index:50; background:rgba(15,18,26,.94); display:flex; align-items:center; justify-content:center; padding:12px; }
   .viewer img{ max-width:100%; max-height:100%; border-radius:8px; }
   .viewer .x{ position:absolute; top:18px; right:18px; background:rgba(255,255,255,.15); color:#fff; border:none; border-radius:50%; padding:9px; cursor:pointer; display:flex; }
-  .note{ font-size:12px; color:var(--muted); text-align:center; padding:4px 8px; }
+  .note{ font-size:12px; color:var(--muted); padding:2px 2px; }
   svg{ stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 </style>
 </head>
@@ -66,33 +85,86 @@ const I = {
   xb:'<svg viewBox="0 0 24 24" width="22" height="22"><path d="M18 6 6 18M6 6l12 12"/></svg>',
   chev:'<svg viewBox="0 0 24 24" width="18" height="18"><path d="m9 18 6-6-6-6"/></svg>',
   back:'<svg viewBox="0 0 24 24" width="16" height="16"><path d="m15 18-6-6 6-6"/></svg>',
-  pin:'<svg viewBox="0 0 24 24" width="18" height="18"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+  map:'<svg viewBox="0 0 24 24" width="17" height="17"><path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15M15 6v15"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" width="17" height="17"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>',
+  metro:'<svg viewBox="0 0 24 24" width="17" height="17"><rect x="4" y="3" width="16" height="13" rx="3"/><path d="M4 11h16M8 19l-2 2M16 19l2 2M8.5 8h.01M15.5 8h.01"/></svg>',
 };
+
+/* ---------- listes de présence ---------- */
 const LISTS = [ {key:'complete',name:'Complète'}, {key:'blood',name:'BLOOD'}, {key:'light',name:'LIGHTS'} ];
 const CLASS_LIST = ["ARQUETE Julien","BABAULT Sofia","CALIF Dianellya","CARTECHINI Linda","CAUVET Alexandre","COHEN Mia","COLLEU Malia","DA COSTA Lisa","DAHBI Rime","DIOP Marème","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tikiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","KERNISSI Chaïma","KHELIFI Shaïnez","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma","MENCEUR Sofia","MENOUER Elisa","MOURET Scott","NIKOLIC Matija","PANZUTI-MORAND Luna","PIQUOIS DE MONTENAY Coline","POLLA Victoire","RIBEIRO Adrien","SAINDOU Maysaa","SURDEL Martin","TRILLAUD-RUGGERI Marc-Antoine"];
 const BLOOD_LIST = ["BABAULT Sofia","CARTECHINI Linda","CAUVET Alexandre","COLLEU Malia","DA COSTA Lisa","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tikiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma"];
 const LIGHT_LIST = ["ARQUETE Julien","CALIF Dianellya","COHEN Mia","DAHBI Rime","DIOP Marème","KERNISSI Chaïma","KHELIFI Shaïnez","MENCEUR Sofia","MENOUER Elisa","MOURET Scott","NIKOLIC Matija","PANZUTI-MORAND Luna","PIQUOIS DE MONTENAY Coline","POLLA Victoire","RIBEIRO Adrien","SAINDOU Maysaa","SURDEL Martin","TRILLAUD-RUGGERI Marc-Antoine"];
 const LIST_DATA = { complete:CLASS_LIST, blood:BLOOD_LIST, light:LIGHT_LIST };
-const SORTIES = [
-  { name:'Alternative London',     files:['ALTERNATIVE LONDON.jpeg'] },
-  { name:'Horizon 22',             files:['HORIZON 22.jpeg'] },
-  { name:'London Dungeon',         files:['LONDON DUNGEON 1.jpeg','LONDON DUNGEON 2.jpeg','LONDON DUNGEON 3.jpeg'] },
-  { name:'Old Operating Theatre',  files:['OLD OPERATING THEATRE.jpeg','OLD OPERATING THEATRE 2.jpeg'] },
-  { name:'Tate Modern (résa)',     files:['RESA TATE MODERN.jpeg'] },
-  { name:'V&A Storehouse',         files:['V&A STOREHOUSE.jpeg'] },
+
+/* ---------- sorties (billets + infos figées, partagées via GitHub) ---------- */
+const GROUPS = [
+  { key:'blood', name:'BLOOD', sub:'Groupe 1', cls:'g-blood', pill:'blood' },
+  { key:'light', name:'LIGHTS', sub:'Groupe 2', cls:'g-light', pill:'light' },
 ];
+const SORTIES = [
+  { id:'whitechapel', name:'WHITECHAPEL', groups:['blood'], date:'02/06', time:'10h00',
+    address:'Whitechapel Gallery, 77-82 Whitechapel High Street, London E1 7QX',
+    metro:'Aldgate East (District, Hammersmith & City)',
+    telDisplay:'Duncan (guide) — +44 (0) 7957 240456', tel:'+447957240456',
+    note:'Visite guidée « Jack l’Éventreur » (en anglais). RDV à la Whitechapel Gallery. Pas de voucher.',
+    files:[] },
+  { id:'alternative', name:'ALTERNATIVE LONDON', groups:['light'], date:'02/06', time:'16h00',
+    address:'19 Hessel Street, London E1 2LR',
+    metro:'Shadwell (Overground, DLR) ou Aldgate East (District, H&C)',
+    telDisplay:'+44 (0) 7551 911 822', tel:'+447551911822',
+    note:'Découverte Street Art + atelier. RDV : 19 Hessel Street. Présenter la confirmation.',
+    files:['ALTERNATIVE LONDON.jpeg'] },
+  { id:'tate', name:'TATE MODERN', groups:['light'], date:'03/06', time:'10h00',
+    address:'Tate Modern, Bankside, London SE1 9TG',
+    metro:'Southwark (Jubilee) ou Blackfriars (Circle, District)',
+    telDisplay:'020 7887 8888', tel:'+442078878888',
+    ref:'Réf. 22981185 / TWIN TRAINING INTERNATIONAL / M. SOMSOIS',
+    note:'Visite libre. Entrée par le Turbine Hall → School Welcome Room, Clore Hub, Natalie Bell Building, niveau 0. Présenter le voucher.',
+    files:['RESA TATE MODERN.jpeg'] },
+  { id:'oot', name:'OLD OPERATING THEATRE', groups:['blood'], date:'03/06', time:'12h15',
+    address:'The Old Operating Theatre Museum and Herb Garret, 9a St Thomas Street, London SE1 9RY',
+    metro:'London Bridge (Jubilee, Northern)',
+    telDisplay:'+44 (0) 207 188 2679', tel:'+442071882679',
+    note:'Visite guidée. Présenter la confirmation.',
+    files:['OLD OPERATING THEATRE.jpeg','OLD OPERATING THEATRE 2.jpeg'] },
+  { id:'horizon', name:'HORIZON 22', groups:['blood','light'], date:'04/06', time:'11h00',
+    address:'Horizon 22, 22 Bishopsgate, London EC2N 4AJ',
+    metro:'Liverpool Street (Central, Circle, H&C, Metropolitan, Elizabeth) ou Bank',
+    note:'Visite libre (plateforme niveau 58). Présenter le ticket.',
+    files:['HORIZON 22.jpeg'] },
+  { id:'dungeon', name:'LONDON DUNGEON', groups:['blood'], date:'05/06', time:'10h00',
+    address:'The London Dungeon, County Hall, Westminster Bridge Road, London SE1 7PB',
+    metro:'Westminster (Jubilee, Circle, District) ou Waterloo',
+    telDisplay:'+44 (0) 333 321 2001', tel:'+443333212001',
+    note:'Visite libre. Présenter le voucher.',
+    files:['LONDON DUNGEON 1.jpeg','LONDON DUNGEON 2.jpeg','LONDON DUNGEON 3.jpeg'] },
+  { id:'va', name:'V&A EAST STOREHOUSE', groups:['light'], date:'05/06', time:'10h00',
+    address:'V&A East Storehouse, Parkes Street, Queen Elizabeth Olympic Park, Hackney Wick, London E20 3AX',
+    metro:'Hackney Wick (Overground) ou Stratford',
+    telDisplay:'+44 (0) 207 942 2000', tel:'+442079422000',
+    note:'Visite libre. Présenter le voucher.',
+    files:['V&A STOREHOUSE.jpeg'] },
+];
+const dkey=d=>{ const [j,m]=d.split('/'); return parseInt(m,10)*100+parseInt(j,10); };
+
+/* ---------- stockage présence (local) ---------- */
 const LS = (()=>{ try{ const k='__t'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return localStorage; }
   catch(e){ const m={}; return { getItem:k=>k in m?m[k]:null, setItem:(k,v)=>{m[k]=String(v);}, removeItem:k=>{delete m[k];} }; } })();
 const getJSON=(k,def)=>{ try{ const v=LS.getItem(k); return v?JSON.parse(v):def; }catch{ return def; } };
 const setJSON=(k,v)=>{ try{ LS.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } };
 const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- état ---------- */
 let roster = (()=>{ const r=getJSON('carnet_roster',null)||{}; const mk=a=>a.map(n=>({id:uid(),name:n}));
   const out={}; LISTS.forEach(l=>{ out[l.key]=(r[l.key]&&r[l.key].length)?r[l.key]:mk(LIST_DATA[l.key]); }); return out; })();
 setJSON('carnet_roster',roster);
 let presence = getJSON('carnet_presence',{});
-const ui = { tab:'presence', listIdx:0, sortieIdx:null, viewer:null };
+const ui = { tab:'presence', listIdx:0, sortieId:null, viewer:null };
 const savePresence=()=>setJSON('carnet_presence',presence);
+
+/* ================= RENDU ================= */
 const app=document.getElementById('app');
 function render(){
   const body = ui.tab==='presence' ? renderPresence() : renderBillets();
@@ -108,6 +180,7 @@ function render(){
     </nav>
     ${ui.viewer?`<div class="viewer" data-action="closeViewer"><img src="${ui.viewer}" alt="billet"><button class="x">${I.xb}</button></div>`:''}`;
 }
+
 function renderPresence(){
   const cur=LISTS[ui.listIdx];
   const members=roster[cur.key]||[];
@@ -125,33 +198,64 @@ function renderPresence(){
   </section>`;
   return `<div class="stack">${selector}${card}</div>`;
 }
+
 function renderBillets(){
-  if(ui.sortieIdx!==null && SORTIES[ui.sortieIdx]) return renderSortie(SORTIES[ui.sortieIdx]);
-  const items=SORTIES.map((s,i)=>`<div class="listitem"><button class="main" data-action="sortie:${i}">
-    <div class="lead"><span style="color:var(--navy)">${I.pin}</span><div><div class="t">${esc(s.name)}</div>
-    <div class="d">${s.files.length} billet${s.files.length>1?'s':''}</div></div></div>${I.chev}</button></div>`).join('');
-  return `<div class="stack"><p class="note">Billets partagés depuis GitHub — visibles par toute l’équipe.</p><div class="stack-sm">${items}</div></div>`;
+  const s = ui.sortieId && SORTIES.find(x=>x.id===ui.sortieId);
+  if(s) return renderSortie(s);
+  const sections = GROUPS.map(g=>{
+    const items = SORTIES.filter(s=>s.groups.includes(g.key)).sort((a,b)=>dkey(a.date)-dkey(b.date));
+    const rows = items.map(s=>`<div class="listitem"><button class="main" data-action="open" data-id="${s.id}">
+      <div><div class="entryline">${g.name} - ${esc(s.date)} - ${esc(s.time)} - <span class="nm">${esc(s.name)}</span></div>
+      <div class="entrysub">${s.files.length?(s.files.length+' billet'+(s.files.length>1?'s':'')):'infos & contact'} · ${esc(s.metro.split(' (')[0])}</div></div>${I.chev}</button></div>`).join('');
+    return `<section><div class="grouphead ${g.cls}"><span class="gname">${g.name}</span><span class="gsub">${g.sub}</span></div><div class="stack-sm">${rows}</div></section>`;
+  }).join('');
+  return `<div class="stack"><p class="note">Programme partagé — visible par toute l’équipe.</p>${sections}</div>`;
 }
+
 function renderSortie(s){
-  const thumbs=s.files.map(f=>{ const u=encodeURIComponent(f);
-    return `<div class="thumb ${s.files.length===1?'full':''}"><img src="${u}" loading="lazy" alt="${esc(f)}" data-action="view" data-src="${u}"></div>`; }).join('');
-  return `<div class="stack"><button class="back" data-action="backSorties">${I.back} Toutes les sorties</button>
-    <h2 class="day ser">${esc(s.name)}</h2>
-    <div class="grid2">${thumbs}</div>
-    <p class="note">Touche un billet pour l’agrandir.</p></div>`;
+  const g = GROUPS.find(x=>s.groups.includes(x.key));
+  const pills = s.groups.map(k=>{ const gg=GROUPS.find(x=>x.key===k); return `<span class="pill ${gg.pill}">${gg.name}</span>`; }).join(' ');
+  const thumbs = s.files.length ? `<div class="grid2">${s.files.map(f=>{ const u=encodeURIComponent(f);
+      return `<div class="thumb ${s.files.length===1?'full':''}"><img src="${u}" loading="lazy" alt="${esc(f)}" data-action="view" data-src="${u}"></div>`; }).join('')}</div>` : '';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.address);
+  const callBtn = s.tel ? `<a class="actionbtn call" href="tel:${esc(s.tel)}">${I.phone} Appeler</a>` : '';
+  const infos = [
+    `<div class="info"><div class="l">Adresse</div><div class="v">${esc(s.address)}</div></div>`,
+    `<div class="info"><div class="l">Métro</div><div class="v">${esc(s.metro)}</div></div>`,
+    s.telDisplay ? `<div class="info"><div class="l">Contact</div><div class="v">${s.tel?`<a href="tel:${esc(s.tel)}">${esc(s.telDisplay)}</a>`:esc(s.telDisplay)}</div></div>`:'',
+    s.ref ? `<div class="info"><div class="l">Réservation</div><div class="v">${esc(s.ref)}</div></div>`:'',
+    s.note ? `<div class="info"><div class="l">Renseignements</div><div class="v">${esc(s.note)}</div></div>`:'',
+  ].join('');
+  return `<div class="stack">
+    <button class="back" data-action="backBillets">${I.back} Programme</button>
+    <div><div style="margin-bottom:6px">${pills}</div>
+      <h2 class="day ser">${esc(s.name)}</h2>
+      <div class="meta">${esc(s.date)} · ${esc(s.time)}</div></div>
+    <div class="btnrow"><a class="actionbtn maps" href="${mapsUrl}" target="_blank" rel="noopener">${I.map} Google Maps</a>${callBtn}</div>
+    ${infos}
+    ${thumbs}
+    ${s.files.length?'<p class="note" style="text-align:center">Touche un billet pour l’agrandir.</p>':''}
+  </div>`;
 }
+
+/* ================= ACTIONS ================= */
 const actions={
   'tab:presence':()=>{ui.tab='presence';},
-  'tab:billets':()=>{ui.tab='billets'; ui.sortieIdx=null;},
+  'tab:billets':()=>{ui.tab='billets'; ui.sortieId=null;},
   togglePresent:(el)=>{ const id=el.dataset.id; if(presence[id]) delete presence[id]; else presence[id]=true; savePresence(); },
   raz:()=>{ const cur=LISTS[ui.listIdx]; (roster[cur.key]||[]).forEach(m=>{ delete presence[m.id]; }); savePresence(); },
-  backSorties:()=>{ ui.sortieIdx=null; },
+  open:(el)=>{ ui.sortieId=el.dataset.id; },
+  backBillets:()=>{ ui.sortieId=null; },
   view:(el)=>{ ui.viewer=el.dataset.src; },
   closeViewer:()=>{ ui.viewer=null; },
 };
 for(let i=0;i<LISTS.length;i++){ actions['list:'+i]=()=>{ui.listIdx=i;}; }
-for(let i=0;i<SORTIES.length;i++){ actions['sortie:'+i]=()=>{ui.sortieIdx=i;}; }
-app.addEventListener('click',e=>{ const t=e.target.closest('[data-action]'); if(!t)return; const fn=actions[t.dataset.action]; if(!fn)return; const r=fn(t); if(r!==false) render(); });
+
+app.addEventListener('click',e=>{
+  if(e.target.closest('a[href]')) return; /* laisse passer Maps et tel */
+  const t=e.target.closest('[data-action]'); if(!t)return;
+  const fn=actions[t.dataset.action]; if(!fn)return; const r=fn(t); if(r!==false) render();
+});
 render();
 </script>
 </body>
