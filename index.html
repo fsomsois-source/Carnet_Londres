@@ -38,91 +38,61 @@
   .checkrow.on{ background:rgba(28,42,74,.09); }
   .box{ width:23px; height:23px; flex:none; border:1.8px solid var(--line); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; }
   .checkrow.on .box{ background:var(--navy); border-color:var(--navy); }
-  .row{ display:flex; gap:8px; }
-  input[type=text]{ flex:1; border:1px solid var(--line); background:var(--paper); border-radius:9px; padding:10px 12px; font-size:14px; font-family:inherit; color:var(--ink); outline:none; width:100%; }
-  .btn-dark{ background:var(--ink); color:var(--paper); border:none; border-radius:9px; padding:0 14px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  .muted-note{ font-size:13px; color:var(--muted); padding:8px 0; }
-  .listitem{ background:var(--card); border:1px solid var(--line); border-radius:16px; display:flex; align-items:center; }
-  .listitem > button.main{ flex:1; background:none; border:none; display:flex; align-items:center; justify-content:space-between; padding:13px 16px; text-align:left; cursor:pointer; font-family:inherit; color:var(--ink); }
-  .listitem .t{ font-size:14px; font-weight:600; } .listitem .d{ font-size:12px; color:var(--muted); }
-  .lead{ display:flex; align-items:center; gap:10px; }
-  .icon-btn{ background:none; border:none; color:var(--muted); cursor:pointer; padding:4px; display:inline-flex; }
+  .listitem{ background:var(--card); border:1px solid var(--line); border-radius:16px; }
+  .listitem > button.main{ width:100%; background:none; border:none; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; text-align:left; cursor:pointer; font-family:inherit; color:var(--ink); }
+  .listitem .t{ font-size:15px; font-weight:600; } .listitem .d{ font-size:12px; color:var(--muted); margin-top:1px; }
+  .lead{ display:flex; align-items:center; gap:11px; }
   .back{ background:none; border:none; color:var(--muted); font-size:14px; display:flex; align-items:center; gap:4px; cursor:pointer; font-family:inherit; padding:0; }
   h2.day{ font-size:24px; font-weight:600; }
-  .addphoto{ width:100%; background:var(--red); color:#fff; border:none; border-radius:16px; padding:16px; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-family:inherit; }
-  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-  .thumb{ position:relative; aspect-ratio:3/4; border-radius:12px; overflow:hidden; background:var(--line); }
-  .thumb img{ width:100%; height:100%; object-fit:cover; cursor:pointer; display:block; }
-  .thumb .del{ position:absolute; top:4px; right:4px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; padding:5px; cursor:pointer; display:flex; }
-  .viewer{ position:fixed; inset:0; z-index:50; background:rgba(15,18,26,.92); display:flex; align-items:center; justify-content:center; padding:16px; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .thumb{ position:relative; border-radius:12px; overflow:hidden; background:var(--line); border:1px solid var(--line); }
+  .thumb img{ width:100%; height:auto; display:block; cursor:zoom-in; }
+  .thumb.full{ grid-column:1 / -1; }
+  .viewer{ position:fixed; inset:0; z-index:50; background:rgba(15,18,26,.94); display:flex; align-items:center; justify-content:center; padding:12px; }
   .viewer img{ max-width:100%; max-height:100%; border-radius:8px; }
   .viewer .x{ position:absolute; top:18px; right:18px; background:rgba(255,255,255,.15); color:#fff; border:none; border-radius:50%; padding:9px; cursor:pointer; display:flex; }
+  .note{ font-size:12px; color:var(--muted); text-align:center; padding:4px 8px; }
   svg{ stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 </style>
 </head>
 <body>
 <div id="app"></div>
-<input type="file" id="fileInput" accept="image/*" capture="environment" multiple hidden>
 <script>
-/* ---------- icônes ---------- */
 const I = {
   clip:'<svg viewBox="0 0 24 24" width="22" height="22"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>',
   ticket:'<svg viewBox="0 0 24 24" width="22" height="22"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/></svg>',
   users:'<svg viewBox="0 0 24 24" width="16" height="16"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>',
-  trash:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
-  plus:'<svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 5v14M5 12h14"/></svg>',
   check:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M20 6 9 17l-5-5"/></svg>',
   xb:'<svg viewBox="0 0 24 24" width="22" height="22"><path d="M18 6 6 18M6 6l12 12"/></svg>',
   chev:'<svg viewBox="0 0 24 24" width="18" height="18"><path d="m9 18 6-6-6-6"/></svg>',
   back:'<svg viewBox="0 0 24 24" width="16" height="16"><path d="m15 18-6-6 6-6"/></svg>',
-  cal:'<svg viewBox="0 0 24 24" width="17" height="17"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
-  pin:'<svg viewBox="0 0 24 24" width="16" height="16"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
-  cam:'<svg viewBox="0 0 24 24" width="18" height="18"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg>',
-  img:'<svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L5 21"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" width="18" height="18"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
 };
-
-/* ---------- données ---------- */
 const LISTS = [ {key:'complete',name:'Complète'}, {key:'blood',name:'BLOOD'}, {key:'light',name:'LIGHTS'} ];
 const CLASS_LIST = ["ARQUETE Julien","BABAULT Sofia","CALIF Dianellya","CARTECHINI Linda","CAUVET Alexandre","COHEN Mia","COLLEU Malia","DA COSTA Lisa","DAHBI Rime","DIOP Marème","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tikiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","KERNISSI Chaïma","KHELIFI Shaïnez","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma","MENCEUR Sofia","MENOUER Elisa","MOURET Scott","NIKOLIC Matija","PANZUTI-MORAND Luna","PIQUOIS DE MONTENAY Coline","POLLA Victoire","RIBEIRO Adrien","SAINDOU Maysaa","SURDEL Martin","TRILLAUD-RUGGERI Marc-Antoine"];
 const BLOOD_LIST = ["BABAULT Sofia","CARTECHINI Linda","CAUVET Alexandre","COLLEU Malia","DA COSTA Lisa","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tikiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma"];
 const LIGHT_LIST = ["ARQUETE Julien","CALIF Dianellya","COHEN Mia","DAHBI Rime","DIOP Marème","KERNISSI Chaïma","KHELIFI Shaïnez","MENCEUR Sofia","MENOUER Elisa","MOURET Scott","NIKOLIC Matija","PANZUTI-MORAND Luna","PIQUOIS DE MONTENAY Coline","POLLA Victoire","RIBEIRO Adrien","SAINDOU Maysaa","SURDEL Martin","TRILLAUD-RUGGERI Marc-Antoine"];
 const LIST_DATA = { complete:CLASS_LIST, blood:BLOOD_LIST, light:LIGHT_LIST };
-
-/* ---------- stockage ---------- */
+const SORTIES = [
+  { name:'Alternative London',     files:['ALTERNATIVE LONDON.jpeg'] },
+  { name:'Horizon 22',             files:['HORIZON 22.jpeg'] },
+  { name:'London Dungeon',         files:['LONDON DUNGEON 1.jpeg','LONDON DUNGEON 2.jpeg','LONDON DUNGEON 3.jpeg'] },
+  { name:'Old Operating Theatre',  files:['OLD OPERATING THEATRE.jpeg','OLD OPERATING THEATRE 2.jpeg'] },
+  { name:'Tate Modern (résa)',     files:['RESA TATE MODERN.jpeg'] },
+  { name:'V&A Storehouse',         files:['V&A STOREHOUSE.jpeg'] },
+];
 const LS = (()=>{ try{ const k='__t'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return localStorage; }
   catch(e){ const m={}; return { getItem:k=>k in m?m[k]:null, setItem:(k,v)=>{m[k]=String(v);}, removeItem:k=>{delete m[k];} }; } })();
 const getJSON=(k,def)=>{ try{ const v=LS.getItem(k); return v?JSON.parse(v):def; }catch{ return def; } };
-const setJSON=(k,v)=>{ try{ LS.setItem(k,JSON.stringify(v)); return true; }
-  catch(e){ alert('Mémoire pleine ou indisponible. Supprime quelques billets pour libérer de la place.'); return false; } };
+const setJSON=(k,v)=>{ try{ LS.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } };
 const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-/* ---------- état ---------- */
 let roster = (()=>{ const r=getJSON('carnet_roster',null)||{}; const mk=a=>a.map(n=>({id:uid(),name:n}));
   const out={}; LISTS.forEach(l=>{ out[l.key]=(r[l.key]&&r[l.key].length)?r[l.key]:mk(LIST_DATA[l.key]); }); return out; })();
-setJSON('carnet_roster',roster); /* fige les identifiants */
+setJSON('carnet_roster',roster);
 let presence = getJSON('carnet_presence',{});
-let tickets = (()=>{ const t=getJSON('carnet_tickets',null); return t&&Array.isArray(t.days)?t:{days:[]}; })();
-const ui = { tab:'presence', listIdx:0, dayId:null, placeId:null, viewer:null };
+const ui = { tab:'presence', listIdx:0, sortieIdx:null, viewer:null };
 const savePresence=()=>setJSON('carnet_presence',presence);
-const saveTickets=()=>setJSON('carnet_tickets',tickets);
-
-/* ---------- compression photo ---------- */
-function compressImage(file,maxDim=1200,quality=0.65){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=e=>{ const img=new Image();
-      img.onload=()=>{ let w=img.width,h=img.height;
-        if(w>maxDim||h>maxDim){ if(w>=h){h=Math.round(h*maxDim/w);w=maxDim;}else{w=Math.round(w*maxDim/h);h=maxDim;} }
-        const c=document.createElement('canvas'); c.width=w; c.height=h;
-        c.getContext('2d').drawImage(img,0,0,w,h);
-        resolve(c.toDataURL('image/jpeg',quality)); };
-      img.onerror=reject; img.src=e.target.result; };
-    reader.onerror=reject; reader.readAsDataURL(file);
-  });
-}
-
-/* ================= RENDU ================= */
 const app=document.getElementById('app');
 function render(){
   const body = ui.tab==='presence' ? renderPresence() : renderBillets();
@@ -138,7 +108,6 @@ function render(){
     </nav>
     ${ui.viewer?`<div class="viewer" data-action="closeViewer"><img src="${ui.viewer}" alt="billet"><button class="x">${I.xb}</button></div>`:''}`;
 }
-
 function renderPresence(){
   const cur=LISTS[ui.listIdx];
   const members=roster[cur.key]||[];
@@ -156,81 +125,33 @@ function renderPresence(){
   </section>`;
   return `<div class="stack">${selector}${card}</div>`;
 }
-
 function renderBillets(){
-  const day=tickets.days.find(d=>d.id===ui.dayId);
-  const place=day&&day.places.find(p=>p.id===ui.placeId);
-  if(place) return renderPlace(day,place);
-  if(day) return renderDay(day);
-  return renderDayList();
+  if(ui.sortieIdx!==null && SORTIES[ui.sortieIdx]) return renderSortie(SORTIES[ui.sortieIdx]);
+  const items=SORTIES.map((s,i)=>`<div class="listitem"><button class="main" data-action="sortie:${i}">
+    <div class="lead"><span style="color:var(--navy)">${I.pin}</span><div><div class="t">${esc(s.name)}</div>
+    <div class="d">${s.files.length} billet${s.files.length>1?'s':''}</div></div></div>${I.chev}</button></div>`).join('');
+  return `<div class="stack"><p class="note">Billets partagés depuis GitHub — visibles par toute l’équipe.</p><div class="stack-sm">${items}</div></div>`;
 }
-function renderDayList(){
-  const addrow=`<div class="row"><input type="text" id="newDay" placeholder="Nouveau jour : Lundi 6 — arrivée…" data-enter="addDay"><button class="btn-dark" data-action="addDay">${I.plus}</button></div>`;
-  if(!tickets.days.length) return `<div class="stack">${addrow}<p class="muted-note" style="text-align:center;padding:16px 0">Crée un jour, puis range tes billets par lieu ou activité à l’intérieur.</p></div>`;
-  const items=tickets.days.map(d=>{ const count=d.places.reduce((s,p)=>s+(p.photos?p.photos.length:0),0);
-    return `<div class="listitem"><button class="main" data-action="openDay" data-id="${d.id}">
-      <div class="lead"><span style="color:var(--red)">${I.cal}</span><div><div class="t">${esc(d.label)}</div>
-      <div class="d">${d.places.length} lieu${d.places.length>1?'x':''} · ${count} billet${count>1?'s':''}</div></div></div>${I.chev}</button>
-      <button class="icon-btn" style="padding:0 12px" data-action="delDay" data-id="${d.id}">${I.trash}</button></div>`; }).join('');
-  return `<div class="stack">${addrow}<div class="stack-sm">${items}</div></div>`;
+function renderSortie(s){
+  const thumbs=s.files.map(f=>{ const u=encodeURIComponent(f);
+    return `<div class="thumb ${s.files.length===1?'full':''}"><img src="${u}" loading="lazy" alt="${esc(f)}" data-action="view" data-src="${u}"></div>`; }).join('');
+  return `<div class="stack"><button class="back" data-action="backSorties">${I.back} Toutes les sorties</button>
+    <h2 class="day ser">${esc(s.name)}</h2>
+    <div class="grid2">${thumbs}</div>
+    <p class="note">Touche un billet pour l’agrandir.</p></div>`;
 }
-function renderDay(day){
-  const addrow=`<div class="row"><input type="text" id="newPlace" placeholder="Lieu ou activité : Tower of London…" data-enter="addPlace"><button class="btn-dark" data-action="addPlace">${I.pin}</button></div>`;
-  const items=day.places.length? day.places.map(p=>`<div class="listitem"><button class="main" data-action="openPlace" data-id="${p.id}">
-      <div class="lead"><span style="color:var(--navy)">${I.pin}</span><div><div class="t">${esc(p.label)}</div>
-      <div class="d">${p.photos?p.photos.length:0} billet${(p.photos?p.photos.length:0)>1?'s':''}</div></div></div>${I.chev}</button>
-      <button class="icon-btn" style="padding:0 12px" data-action="delPlace" data-id="${p.id}">${I.trash}</button></div>`).join('')
-    : '<p class="muted-note">Ajoute un lieu ou une activité.</p>';
-  return `<div class="stack"><button class="back" data-action="backDays">${I.back} Tous les jours</button>
-    <h2 class="day ser">${esc(day.label)}</h2>${addrow}<div class="stack-sm">${items}</div></div>`;
-}
-function renderPlace(day,place){
-  const photos=place.photos||[];
-  const thumbs=photos.map(ph=>{ const data=LS.getItem('carnet_ph_'+ph.id);
-    return `<div class="thumb">${data?`<img src="${data}" data-action="viewPhoto" data-ph="${ph.id}" alt="${esc(ph.name||'')}">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted)">${I.img}</div>`}
-      <button class="del" data-action="delPhoto" data-ph="${ph.id}" data-day="${day.id}" data-place="${place.id}">${I.trash}</button></div>`; }).join('');
-  const empty=photos.length?'':'<p class="muted-note" style="text-align:center">Prends en photo ou choisis le billet d’entrée. Il sera compressé et gardé ici.</p>';
-  return `<div class="stack"><button class="back" data-action="backPlaces">${I.back} ${esc(day.label)}</button>
-    <div><h2 class="day ser">${esc(place.label)}</h2><p class="d" style="font-size:12px;color:var(--muted)">${photos.length} billet${photos.length>1?'s':''} enregistré${photos.length>1?'s':''}</p></div>
-    <button class="addphoto" data-action="addPhoto" data-day="${day.id}" data-place="${place.id}">${I.cam} Ajouter un billet (photo)</button>
-    <div class="grid3">${thumbs}</div>${empty}</div>`;
-}
-
-/* ================= ACTIONS ================= */
-function val(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
 const actions={
   'tab:presence':()=>{ui.tab='presence';},
-  'tab:billets':()=>{ui.tab='billets';},
+  'tab:billets':()=>{ui.tab='billets'; ui.sortieIdx=null;},
   togglePresent:(el)=>{ const id=el.dataset.id; if(presence[id]) delete presence[id]; else presence[id]=true; savePresence(); },
   raz:()=>{ const cur=LISTS[ui.listIdx]; (roster[cur.key]||[]).forEach(m=>{ delete presence[m.id]; }); savePresence(); },
-  addDay:()=>{ const n=val('newDay'); if(!n)return; tickets.days=[...tickets.days,{id:uid(),label:n,places:[]}]; saveTickets(); },
-  delDay:(el)=>{ const d=tickets.days.find(x=>x.id===el.dataset.id); if(d){ d.places.forEach(p=>(p.photos||[]).forEach(ph=>LS.removeItem('carnet_ph_'+ph.id))); } tickets.days=tickets.days.filter(x=>x.id!==el.dataset.id); saveTickets(); },
-  openDay:(el)=>{ ui.dayId=el.dataset.id; ui.placeId=null; },
-  backDays:()=>{ ui.dayId=null; },
-  addPlace:()=>{ const n=val('newPlace'); if(!n)return; const d=tickets.days.find(x=>x.id===ui.dayId); if(d){ d.places=[...d.places,{id:uid(),label:n,photos:[]}]; saveTickets(); } },
-  delPlace:(el)=>{ const d=tickets.days.find(x=>x.id===ui.dayId); if(!d)return; const p=d.places.find(x=>x.id===el.dataset.id); if(p)(p.photos||[]).forEach(ph=>LS.removeItem('carnet_ph_'+ph.id)); d.places=d.places.filter(x=>x.id!==el.dataset.id); saveTickets(); },
-  openPlace:(el)=>{ ui.placeId=el.dataset.id; },
-  backPlaces:()=>{ ui.placeId=null; },
-  addPhoto:(el)=>{ const fi=document.getElementById('fileInput'); fi.dataset.day=el.dataset.day; fi.dataset.place=el.dataset.place; fi.click(); return false; },
-  delPhoto:(el)=>{ LS.removeItem('carnet_ph_'+el.dataset.ph); const d=tickets.days.find(x=>x.id===el.dataset.day); if(!d)return; const p=d.places.find(x=>x.id===el.dataset.place); if(p)p.photos=(p.photos||[]).filter(ph=>ph.id!==el.dataset.ph); saveTickets(); },
-  viewPhoto:(el)=>{ ui.viewer=LS.getItem('carnet_ph_'+el.dataset.ph); },
+  backSorties:()=>{ ui.sortieIdx=null; },
+  view:(el)=>{ ui.viewer=el.dataset.src; },
   closeViewer:()=>{ ui.viewer=null; },
 };
 for(let i=0;i<LISTS.length;i++){ actions['list:'+i]=()=>{ui.listIdx=i;}; }
-
+for(let i=0;i<SORTIES.length;i++){ actions['sortie:'+i]=()=>{ui.sortieIdx=i;}; }
 app.addEventListener('click',e=>{ const t=e.target.closest('[data-action]'); if(!t)return; const fn=actions[t.dataset.action]; if(!fn)return; const r=fn(t); if(r!==false) render(); });
-app.addEventListener('keydown',e=>{ if(e.key!=='Enter')return; const t=e.target.closest('[data-enter]'); if(!t)return; e.preventDefault(); const fn=actions[t.dataset.enter]; if(fn){ fn(t); render(); } });
-document.getElementById('fileInput').addEventListener('change',async e=>{
-  const fi=e.target; const files=Array.from(fi.files||[]); if(!files.length)return;
-  const d=tickets.days.find(x=>x.id===fi.dataset.day); const p=d&&d.places.find(x=>x.id===fi.dataset.place);
-  if(!p){ fi.value=''; return; }
-  const btn=document.querySelector('.addphoto'); if(btn) btn.textContent='Traitement…';
-  for(const f of files){ try{ const data=await compressImage(f); const id=uid();
-    try{ LS.setItem('carnet_ph_'+id,data); p.photos=[...(p.photos||[]),{id,name:f.name}]; }
-    catch(err){ alert('Mémoire pleine. Supprime des billets avant d’en ajouter.'); break; } }
-    catch(err){ console.error(err); } }
-  saveTickets(); fi.value=''; render();
-});
 render();
 </script>
 </body>
