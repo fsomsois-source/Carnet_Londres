@@ -92,8 +92,8 @@ const I = {
 
 /* ---------- listes de présence ---------- */
 const LISTS = [ {key:'complete',name:'Complète'}, {key:'blood',name:'BLOOD'}, {key:'light',name:'LIGHTS'} ];
-const CLASS_LIST = ["ARQUETE Julien","BABAULT Sofia","CALIF Dianellya","CARTECHINI Linda","CAUVET Alexandre","COHEN Mia","COLLEU Malia","DA COSTA Lisa","DAHBI Rime","DIOP Marème","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tikiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","KERNISSI Chaïma","KHELIFI Shaïnez","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma","MENCEUR Sofia","MENOUER Elisa","MOURET Scott","NIKOLIC Matija","PANZUTI-MORAND Luna","PIQUOIS DE MONTENAY Coline","POLLA Victoire","RIBEIRO Adrien","SAINDOU Maysaa","SURDEL Martin","TRILLAUD-RUGGERI Marc-Antoine"];
-const BLOOD_LIST = ["BABAULT Sofia","CARTECHINI Linda","CAUVET Alexandre","COLLEU Malia","DA COSTA Lisa","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tikiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma"];
+const CLASS_LIST = ["ARQUETE Julien","BABAULT Sofia","CALIF Dianellya","CARTECHINI Linda","CAUVET Alexandre","COHEN Mia","COLLEU Malia","DA COSTA Lisa","DAHBI Rime","DIOP Marème","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tibiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","KERNISSI Chaïma","KHELIFI Shaïnez","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma","MENCEUR Sofia","MENOUER Elisa","MOURET Scott","NIKOLIC Matija","PANZUTI-MORAND Luna","PIQUOIS DE MONTENAY Coline","POLLA Victoire","RIBEIRO Adrien","SAINDOU Maysaa","SURDEL Martin","TRILLAUD-RUGGERI Marc-Antoine"];
+const BLOOD_LIST = ["BABAULT Sofia","CARTECHINI Linda","CAUVET Alexandre","COLLEU Malia","DA COSTA Lisa","DIOP Médoune","ELKAMMAH Janna","GALEJ Léna","GARRIGUE GILBERT Eléni","GURFINKIEL Daphné","HAIDARA Tibiba","HERRERIAS Bianca","HOUM Chaïneze","JEDIDI Riham-Alicia","JUVE-REVER Manon","MAHBOUB Yanis","MANGANELLI Ruben","MARZOUK Chayma"];
 const LIGHT_LIST = ["ARQUETE Julien","CALIF Dianellya","COHEN Mia","DAHBI Rime","DIOP Marème","KERNISSI Chaïma","KHELIFI Shaïnez","MENCEUR Sofia","MENOUER Elisa","MOURET Scott","NIKOLIC Matija","PANZUTI-MORAND Luna","PIQUOIS DE MONTENAY Coline","POLLA Victoire","RIBEIRO Adrien","SAINDOU Maysaa","SURDEL Martin","TRILLAUD-RUGGERI Marc-Antoine"];
 const LIST_DATA = { complete:CLASS_LIST, blood:BLOOD_LIST, light:LIGHT_LIST };
 
@@ -156,9 +156,15 @@ const setJSON=(k,v)=>{ try{ LS.setItem(k,JSON.stringify(v)); return true; }catch
 const uid=()=>Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+/* ---------- corrections de noms appliquées aux données déjà stockées ---------- */
+/* ajoute ici toute correction future : 'ANCIEN':'NOUVEAU' */
+const FIXES = { 'HAIDARA Tikiba':'HAIDARA Tibiba' };
+
 /* ---------- état ---------- */
 let roster = (()=>{ const r=getJSON('carnet_roster',null)||{}; const mk=a=>a.map(n=>({id:uid(),name:n}));
   const out={}; LISTS.forEach(l=>{ out[l.key]=(r[l.key]&&r[l.key].length)?r[l.key]:mk(LIST_DATA[l.key]); }); return out; })();
+/* applique les corrections sur les noms déjà en mémoire */
+Object.keys(roster).forEach(k=>{ (roster[k]||[]).forEach(m=>{ if(FIXES[m.name]) m.name=FIXES[m.name]; }); });
 setJSON('carnet_roster',roster);
 let presence = getJSON('carnet_presence',{});
 const ui = { tab:'presence', listIdx:0, sortieId:null, viewer:null };
